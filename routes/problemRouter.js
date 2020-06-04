@@ -1,18 +1,18 @@
 const express = require('express');
-const matchController = require('../controllers/matchController')
+const problemController = require('../controllers/problemController')
 
-function routes(Match){
-    const matchRouter = express.Router();
-    const controller = matchController(Match);
+function routes(Problem){
+    const problemRouter = express.Router();
+    const controller = problemController(Problem);
 
     // Middleware
-    matchRouter.use('/archerymatch/:matchId', (req, res, next) => {
-        Match.findById(req.params.matchId, (err, match) => {
+    problemRouter.use('/parsonsproblems/:problemId', (req, res, next) => {
+        Problem.findById(req.params.problemId, (err, problem) => {
             if(err){
                 return res.send(err);
             }
-            if(match){
-                req.match = match;
+            if(problem){
+                req.problem = problem;
                 host = req.header.host
                 return next();
             } else {
@@ -20,38 +20,39 @@ function routes(Match){
         });
     });
 
-    matchRouter.route('/archerymatch/:matchId')
+    problemRouter.route('/parsonsproblems/:problemId')
         .get((req, res) => {
-            const returnMatch = req.match.toJSON();
-            console.log(returnMatch);
-            returnMatch._links = {};
-            returnMatch._links.self = {};
-            returnMatch._links.self.href = `http://${req.headers.host}/api/archerymatch/${returnMatch._id}`;
-            returnMatch._links.collection = {};
-            returnMatch._links.collection.href = `http://${req.headers.host}/api/archerymatch/`;
-            return res.json(returnMatch);
+            const returnProbem = req.problem.toJSON();
+            console.log(returnProbem);
+            returnProbem._links = {};
+            returnProbem._links.self = {};
+            returnProbem._links.self.href = `http://${req.headers.host}/api/parsonsproblems/${returnProbem._id}`;
+            returnProbem._links.collection = {};
+            returnProbem._links.collection.href = `http://${req.headers.host}/api/parsonsproblems/`;
+            return res.json(returnProbem);
         })
         .put((req, res) => {
-            const { match } = req;
-            match.matchName = req.body.matchName;
-            match.matchDate = req.body.matchDate;
-            match.matchScore = req.body.matchScore;
-            match.matchRank = req.body.matchRank;
-            if(!match.matchName || !match.matchDate || !match.matchScore || !match.matchRank) {
+            const { problem } = req;
+            problem.problemName = req.body.problemName;
+            problem.problemSubject = req.body.problemSubject;
+            problem.problemPieces = req.body.problemPieces;
+            problem.problemHints = req.body.problemHints;
+
+            if(!problem.problemName || !problem.problemSubject || !problem.problemPieces || !problem.problemHints) {
                 return res.sendStatus(403);
             }
 
             else {
-                req.match.save((err) => {
+                req.problem.save((err) => {
                     if (err) {
                         return res.send(err);
                     }
-                    return res.json(match);
+                    return res.json(problem);
                 });
             }
         })
         .patch((req, res) => {
-            const { match } = req;
+            const { problem } = req;
 
             if(req.body._id) {
                 delete req.body._id;
@@ -59,17 +60,18 @@ function routes(Match){
             Object.entries(req.body).forEach(item => {
                 const key = item[0];
                 const value = item[1];
-                match[key] = value;
+                problem[key] = value;
             })
-            req.match.save((err) => {
+            req.problem.save((err) => {
                 if (err) {
                     return res.send(err);
                 }
-                return res.json(match);
+                return res.json(problem);
             });
         })
+
         .delete((req, res) => {
-            req.match.remove((err) => {
+            req.problem.remove((err) => {
                 if(err) {
                     return res.send(err);
                 }
@@ -93,13 +95,13 @@ function routes(Match){
             }
         });
 
-    // All archery matches
-    matchRouter.route('/archerymatch/:start?/:limit?')
+    // All parsons problems
+    problemRouter.route('/parsonsproblems/:start?/:limit?')
         .post(controller.post)
         .get(controller.get)
         .options(controller.options);
 
-    return matchRouter;
+    return problemRouter;
 }
 
 module.exports = routes;

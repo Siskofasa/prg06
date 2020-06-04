@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 
 const app = express();
-const db = mongoose.connect('mongodb://127.0.0.1:27017/archeryMatchAPI');
+const db = mongoose.connect('mongodb://127.0.0.1:27017/parsonsProblemsAPI');
 const port = process.env.PORT || 3000;
-const Match = require('./models/matchModel');
-const matchRouter = require('./routes/matchRouter')(Match);
+const Match = require('./models/problemModel');
+const matchRouter = require('./routes/problemRouter')(Match);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());

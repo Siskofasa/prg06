@@ -1,32 +1,32 @@
-function matchController(Match) {
+function problemController(Problem) {
     function post(req, res) {
-        const match = new Match(req.body);
-        if(!req.body.matchName || !req.body.matchDate || !req.body.matchScore || !req.body.matchRank) {
+        const problem = new Problem(req.body);
+        if(!req.body.problemName || !req.body.problemSubject || !req.body.problemPieces || !req.body.problemHints) {
             return res.sendStatus(403);
         }
 
-        match.save(function (err) {
+        problem.save(function (err) {
             if(err) {
                 res.send(err);
             } else {
-                return res.status(201).json(match);
+                return res.status(201).json(problem);
             }
         });
     }
 
     function get(req, res, err) {
         const query = {};
-        if(req.query.matchName){
-            query.matchName = req.query.matchName;
-        } else if(req.query.matchDate) {
-            query.matchDate = req.query.matchDate;
-        } else if(req.query.matchScore) {
-            query.matchScore = req.query.matchScore;
-        } else if(req.query.matchRank) {
-            query.matchRank = req.query.matchRank;
+        if(req.query.problemName){
+            query.problemName = req.query.problemName;
+        } else if(req.query.problemSubject) {
+            query.problemSubject = req.query.problemSubject;
+        } else if(req.query.problemPieces) {
+            query.problemPieces = req.query.problemPieces;
+        } else if(req.query.problemHints) {
+            query.problemHints = req.query.problemHints;
         }
 
-        const hostUrl = `http://${req.headers.host}/api/archerymatch/`
+        const hostUrl = `http://${req.headers.host}/api/parsonsproblems/`
         let perPage = parseInt(req.query.limit);
         let page = parseInt(req.query.start);
 
@@ -36,23 +36,23 @@ function matchController(Match) {
             perPage = 10;
             page = 0;
         }
-        Match.find({})
+        Problem.find({})
             .skip((page + 1) * perPage)
             .limit(perPage)
-            .exec(function (err, match) {
-                Match.countDocuments().exec(function (err, count) {
+            .exec(function (err, problem) {
+                Problem.countDocuments().exec(function (err, count) {
                     if(err) {
                         return res.send(err);
                     };
                     const items = [];
-                    for(i = 0; i < match.length; i++) {
-                        const item = match[i].toJSON();
+                    for(i = 0; i < problem.length; i++) {
+                        const item = problem[i].toJSON();
                         item._links = {
                             self: {
-                                href: `http://${req.headers.host}/api/archerymatch/${item._id}`
+                                href: `http://${req.headers.host}/api/parsonsproblems/${item._id}`
                             },
                             collection: {
-                                href: `http://${req.headers.host}/api/archerymatch/`
+                                href: `http://${req.headers.host}/api/parsonsproblems/`
                             }
                         }
                         items.push(item);
@@ -61,7 +61,7 @@ function matchController(Match) {
                         items: items,
                         _links: {
                             self: {
-                                href: `http://${req.headers.host}/api/archerymatch/`
+                                href: `http://${req.headers.host}/api/parsonsproblems/`
                             }
                         },
                         pagination: {
@@ -115,4 +115,4 @@ function matchController(Match) {
     return {post, get, options};
 }
 
-module.exports = matchController;
+module.exports = problemController;

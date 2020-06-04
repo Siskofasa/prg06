@@ -5,8 +5,8 @@ const bodyParser = require('body-parser')
 const app = express();
 const db = mongoose.connect('mongodb://127.0.0.1:27017/parsonsProblemsAPI');
 const port = process.env.PORT || 3000;
-const Match = require('./models/problemModel');
-const matchRouter = require('./routes/problemRouter')(Match);
+const Problem = require('./models/problemModel');
+const problemRouter = require('./routes/problemRouter')(Problem);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -23,7 +23,7 @@ app.use(function (req, res, next) {
     }
 });
 
-app.use('/api', matchRouter);
+app.use('/api', problemRouter);
 
 app.get('/', (req, res) => {
     res.send('Welcome');

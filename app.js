@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 
@@ -10,6 +11,7 @@ const problemRouter = require('./routes/problemRouter')(Problem);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use(function (req, res, next) {
     if (req.accepts(['application/json', 'application/x-www-form-urlencoded'])) {

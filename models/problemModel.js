@@ -12,7 +12,7 @@ const problemModel =  new Schema({
 
         problemName: {type:String, default:null},
         problemSubject: {type:String, default:null},
-        problemPieces: [{rule: String, ident: Number, distractor:Boolean}],
+        problemPieces: [{rule: String, ident: Number, distractor:Boolean, vital:Boolean, static:Boolean}],
         problemHints: [{hintName: String, hintValid: Boolean}],
     }
 );
